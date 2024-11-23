@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "br.edu.ifsp.dmo.listadecontatos"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "br.edu.ifsp.dmo.listadecontatos"
@@ -32,6 +32,9 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+    }
+    viewBinding{
+        enable = true;
     }
 }
 

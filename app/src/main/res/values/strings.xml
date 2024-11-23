@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Lista de Contatos</string>
+    <string name="new_contact">Novo Contato</string>
+    <string name="hint_contact_name">Nome do Contato</string>
+    <string name="hint_contact_phonenumber">Número de Telefone</string>
+    <string name="btn_dialog_save">Salvar</string>
+    <string name="btn_dialog_cancel">Cancelar</string>
 </resources>
