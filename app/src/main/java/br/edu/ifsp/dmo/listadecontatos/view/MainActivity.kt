@@ -79,7 +79,7 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        // Salve o estado do diálogo e os textos dos campos que poderiam estar preenchidos
+        // Salve o estado do diálogo e os textos dos campos que poderiam estar preenchidos.
         outState.putString("dialogName", dialogName)
         outState.putString("dialogPhone", dialogPhone)
         outState.putBoolean("isDialogOpen", isDialogOpen)
@@ -94,7 +94,7 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
     }
 
     private fun configClickListener() {
-        binding.buttonNewContact.setOnClickListener() {
+        binding.buttonNewContact.setOnClickListener {
             handleNewContactDialog()
         }
     }
@@ -124,7 +124,7 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
             dialogPhone = bindingDialog.edittextPhone.text.toString()
         }
 
-        // Se os dados de contato foram restaurados, os campos seram preenchidos com eles.
+        // Se os dados de contato foram restaurados, os campos serão preenchidos com eles.
         bindingDialog.edittextName.setText(dialogName)
         bindingDialog.edittextPhone.setText(dialogPhone)
 
