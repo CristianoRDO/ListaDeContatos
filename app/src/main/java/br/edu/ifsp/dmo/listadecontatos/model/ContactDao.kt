@@ -10,6 +10,6 @@ object ContactDao {
     }
 
     fun findAll(): List<Contact>{
-        return ArrayList(dataset);
+        return ArrayList(dataset.sortedBy { contact -> contact.name })
     }
 }

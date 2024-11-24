@@ -10,6 +10,7 @@ import android.widget.AdapterView
 import android.widget.AdapterView.OnItemClickListener
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.addTextChangedListener
 import br.edu.ifsp.dmo.listadecontatos.R
 import br.edu.ifsp.dmo.listadecontatos.databinding.ActivityMainBinding
 import br.edu.ifsp.dmo.listadecontatos.databinding.NewContactDialogBinding
@@ -22,11 +23,20 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
     private lateinit var binding: ActivityMainBinding
     private lateinit var adapter: ListContactAdapter
     private val listDataSource = ArrayList<Contact>()
+    private var dialogName: String = ""
+    private var dialogPhone: String = ""
+    private var isDialogOpen: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        if (savedInstanceState != null && savedInstanceState.getBoolean("isDialogOpen")) {
+            dialogName = savedInstanceState.getString("dialogName", "")
+            dialogPhone = savedInstanceState.getString("dialogPhone", "")
+            handleNewContactDialog()  // Recria o diálogo com os valores salvos
+        }
 
         Log.v(TAG, "Executando o onCreate()")
         configClickListener()
@@ -67,6 +77,14 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
         super.onDestroy()
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        // Salve o estado do diálogo e os textos dos campos que poderiam estar preenchidos
+        outState.putString("dialogName", dialogName)
+        outState.putString("dialogPhone", dialogPhone)
+        outState.putBoolean("isDialogOpen", isDialogOpen)
+    }
+
     override fun onItemClick(parent: AdapterView<*>?, p1: View?, position: Int, id: Long) {
         val selectContact = binding.listviewContacts.adapter.getItem(position) as Contact
         val uri = "tel:${selectContact.phone}"
@@ -94,9 +112,21 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
         adapter.notifyDataSetChanged()
     }
 
-    private fun handleNewContactDialog()
-    {
+    private fun handleNewContactDialog() {
         val bindingDialog = NewContactDialogBinding.inflate(layoutInflater)
+
+        // Adicionado "escutador" aos campos de texto da caixa de diálogo para registrar alterações de conteúdo.
+        bindingDialog.edittextName.addTextChangedListener {
+            dialogName = bindingDialog.edittextName.text.toString()
+        }
+
+        bindingDialog.edittextPhone.addTextChangedListener {
+            dialogPhone = bindingDialog.edittextPhone.text.toString()
+        }
+
+        // Se os dados de contato foram restaurados, os campos seram preenchidos com eles.
+        bindingDialog.edittextName.setText(dialogName)
+        bindingDialog.edittextPhone.setText(dialogPhone)
 
         val builderDialog = AlertDialog.Builder(this)
         builderDialog.setView(bindingDialog.root)
@@ -112,14 +142,25 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
                         )
                     )
                     updateListDataSource()
+                    clearDialogState()
                     dialog.dismiss()
                 })
             .setNegativeButton(
                 R.string.btn_dialog_cancel,
                 DialogInterface.OnClickListener {dialog, which ->
                     Log.v(TAG, "Cancelar novo Contato")
+                    clearDialogState()
                     dialog.cancel()
                 })
         builderDialog.create().show()
+
+        isDialogOpen = true  // Define o estado do diálogo como aberto
     }
+
+    private fun clearDialogState() {
+        isDialogOpen = false
+        dialogName = ""
+        dialogPhone = ""
+    }
+
 }
