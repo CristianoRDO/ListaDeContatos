@@ -32,10 +32,13 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (savedInstanceState != null && savedInstanceState.getBoolean("isDialogOpen")) {
+        if (savedInstanceState != null) {
             dialogName = savedInstanceState.getString("dialogName", "")
             dialogPhone = savedInstanceState.getString("dialogPhone", "")
-            handleNewContactDialog()  // Recria o diálogo com os valores salvos
+
+            if(savedInstanceState.getBoolean("isDialogOpen")) {
+                handleNewContactDialog()  // Recria o diálogo com os valores salvos
+            }
         }
 
         Log.v(TAG, "Executando o onCreate()")
@@ -152,6 +155,13 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
                     clearDialogState()
                     dialog.cancel()
                 })
+            .setOnDismissListener{ // Adicionado "escutador" ao dialog para verificar se foi fechado.
+                if(isDialogOpen) { // Se for true, significa que o diálogo foi fechado acidentalmente (clicando fora), então os dados são recuperados
+                    dialogName = bindingDialog.edittextName.text.toString()
+                    dialogPhone = bindingDialog.edittextPhone.text.toString()
+                    isDialogOpen = false
+                }
+            }
         builderDialog.create().show()
 
         isDialogOpen = true  // Define o estado do diálogo como aberto
